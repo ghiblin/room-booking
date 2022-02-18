@@ -5,11 +5,11 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import AccountForm from "../components/forms/account-form";
 import { getUserInfo, updateUserInfo } from "../lib/api";
-import { UserDTO } from "../server/user/dtos/user.dto";
+import { UpdateUserDTO } from "../server/user/dtos/update-user.dto";
 
 const AccountPage: NextPage = () => {
   const { data: session, status } = useSession();
-  const [userInfo, setUserInfo] = useState<UserDTO | null>(null);
+  const [userInfo, setUserInfo] = useState<UpdateUserDTO | null>(null);
   useEffect(() => {
     getUserInfo().then((dto) => {
       const { name, company } = dto;
@@ -18,7 +18,7 @@ const AccountPage: NextPage = () => {
   }, []);
   const toast = useToast();
 
-  const onSaveUserInfo = async (userInfo: UserDTO) => {
+  const onSaveUserInfo = async (userInfo: UpdateUserDTO) => {
     try {
       await updateUserInfo(userInfo);
       toast({
