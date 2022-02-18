@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
-import { INestApplication } from "@nestjs/common";
+import { INestApplication, ValidationPipe } from "@nestjs/common";
 import * as http from "http";
 import { AppModule } from "./app/app.module";
 import { NextApiHandler } from "next";
@@ -12,6 +12,7 @@ export module Backend {
     if (!app) {
       app = await NestFactory.create(AppModule, { bodyParser: false });
       app.setGlobalPrefix("api");
+      app.useGlobalPipes(new ValidationPipe());
 
       await app.init();
     }
