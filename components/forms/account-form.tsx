@@ -7,11 +7,11 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import { UserDTO } from "../../server/user/dtos/user.dto";
+import { UpdateUserDTO } from "../../server/user/dtos/update-user.dto";
 
 type AccountFormProps = {
-  user: UserDTO;
-  onSubmit: (user: UserDTO) => void;
+  user: UpdateUserDTO;
+  onSubmit: (user: UpdateUserDTO) => void;
 };
 
 const AccountForm = ({ user, onSubmit }: AccountFormProps) => {
@@ -19,7 +19,7 @@ const AccountForm = ({ user, onSubmit }: AccountFormProps) => {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
-  } = useForm<UserDTO>({ defaultValues: user });
+  } = useForm<UpdateUserDTO>({ defaultValues: user });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

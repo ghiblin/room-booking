@@ -45,14 +45,15 @@ enum Company {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?   @unique
-  company       Company   @default(COKE)
+  email         String?       @unique
+  company       Company?
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  Reservation   Reservation[]
 }
 
 model VerificationToken {
@@ -61,4 +62,34 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Room {
+  code         String        @id
+  company      Company
+  reservations Reservation[]
+}
+
+enum Slot {
+  S09
+  S10
+  S11
+  S12
+  S13
+  S14
+  S15
+  S16
+  S17
+  S18
+}
+
+model Reservation {
+  roomCode String
+  date     DateTime @default(now()) @db.Date
+  slot     Slot
+  room     Room     @relation(fields: [roomCode], references: [code])
+  user     User     @relation(fields: [userId], references: [id])
+  userId   String
+
+  @@unique([roomCode, date, slot])
 }

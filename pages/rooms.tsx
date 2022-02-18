@@ -1,23 +1,24 @@
-import { chakra, Heading } from "@chakra-ui/react";
+import { Heading } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import Rooms from "../components/rooms";
 import { getRooms } from "../lib/api";
 import { RoomDTO } from "../server/room/dtos/room.dto";
 
-const Index: NextPage = () => {
+const RoomsPage: NextPage = () => {
   const [rooms, setRooms] = useState<RoomDTO[]>([]);
   useEffect(() => {
     getRooms().then(setRooms);
   }, []);
 
   return (
-    <chakra.section py={32} textAlign={"center"}>
-      <Heading size={"3xl"} as={"h1"}>
-        Welcome to our Room Booking System
+    <section>
+      <Heading size={"2xl"} textAlign="center" mb={16}>
+        Pick a room
       </Heading>
-    </chakra.section>
+      <Rooms rooms={rooms} />
+    </section>
   );
 };
 
-export default Index;
+export default RoomsPage;

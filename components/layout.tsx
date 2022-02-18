@@ -8,7 +8,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <>
       <Navbar />
-      <main>{children}</main>
+      <main style={{ minHeight: "calc(100vh - 64px)" }}>{children}</main>
     </>
   );
 }

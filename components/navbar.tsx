@@ -50,6 +50,7 @@ export default function Navbar() {
         </HStack>
         {status === "authenticated" ? (
           <div>
+            <NavLink href="/rooms">Rooms</NavLink>
             <NavLink href="/account">Account</NavLink>
             {data?.user?.image ? (
               <Avatar src={data.user.image} size={"sm"} mx={"4"} />
