@@ -1,6 +1,16 @@
-import { Controller, Get, Param, Query, ValidationPipe } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  ValidationPipe,
+} from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { today } from "../../lib/utils";
+import { Identify } from "../common/identify.decorator";
+import { CreateReservationDTO } from "./dtos/create-reservation.dto";
 import { ReservationsQueryDTO } from "./dtos/reservations-query.dto";
 import { ReservationService } from "./reservation.service";
 import { RoomService } from "./room.service";
@@ -20,6 +30,15 @@ export class RoomController {
   @Get(":code")
   getRoom(@Param("code") code: string) {
     return this.roomService.getRoom(code);
+  }
+
+  @Post(":code/reservations")
+  bookRoom(@Body() data: CreateReservationDTO, @Identify() email: string) {
+    return this.reservationService.createReservation({
+      room: { connect: { code: data.roomCode } },
+      slot: data.slot,
+      user: { connect: { email } },
+    });
   }
 
   @Get(":code/reservations")

@@ -1,21 +1,39 @@
-import { chakra, Heading } from "@chakra-ui/react";
+import { chakra, Heading, useToast } from "@chakra-ui/react";
+import { Slot } from "@prisma/client";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Reservations from "../../components/reservations";
-import { getReservations } from "../../lib/api";
+import { createReservation, getReservations } from "../../lib/api";
 import { ReservationDTO } from "../../server/room/dtos/reservation.dto";
 
 const Room: NextPage = () => {
   const router = useRouter();
   const { code } = router.query;
+  const toast = useToast();
 
   const [reservations, setReservations] = useState<ReservationDTO[]>([]);
   useEffect(() => {
     getReservations(code as string).then(setReservations);
   }, [code]);
 
-  console.log(reservations);
+  const bookRoom = async (slot: Slot) => {
+    try {
+      const reservation = await createReservation(code as string, slot);
+      setReservations([...reservations, reservation]);
+      toast({
+        title: `Room booked`,
+        isClosable: true,
+      });
+    } catch (err) {
+      toast({
+        title: `Failed to book room`,
+        description: err.message,
+        status: "error",
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <>
@@ -23,7 +41,7 @@ const Room: NextPage = () => {
         Reservation for Room {code}
       </Heading>
       <chakra.section w={"100%"} maxW={"500px"} mx={"auto"}>
-        <Reservations reservations={reservations} />
+        <Reservations reservations={reservations} onBook={bookRoom} />
       </chakra.section>
     </>
   );

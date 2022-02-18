@@ -1,22 +1,8 @@
-import { Slot } from "@prisma/client";
-import {
-  IsDateString,
-  IsObject,
-  IsString,
-  ValidateNested,
-} from "class-validator";
+import { IsObject, ValidateNested } from "class-validator";
 import { UserDTO } from "../../user/dtos/user.dto";
+import { CreateReservationDTO } from "./create-reservation.dto";
 
-export class ReservationDTO {
-  @IsString()
-  roomCode: string;
-
-  @IsDateString()
-  date: string;
-
-  @IsString()
-  slot: Slot;
-
+export class ReservationDTO extends CreateReservationDTO {
   @IsObject()
   @ValidateNested()
   user?: UserDTO;

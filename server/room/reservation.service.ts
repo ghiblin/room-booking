@@ -6,6 +6,14 @@ import { PrismaService } from "../prisma/prisma.service";
 export class ReservationService {
   constructor(private readonly db: PrismaService) {}
 
+  async createReservation(data: Prisma.ReservationCreateInput) {
+    const reservation = await this.db.reservation.create({
+      data,
+      include: { user: true },
+    });
+    return reservation;
+  }
+
   async getReservations(where: Prisma.ReservationWhereInput) {
     const reservations = await this.db.reservation.findMany({
       where,

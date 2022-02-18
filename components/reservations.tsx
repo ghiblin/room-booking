@@ -6,26 +6,30 @@ import { ReservationDTO } from "../server/room/dtos/reservation.dto";
 
 type ReservationsProps = {
   reservations: ReservationDTO[];
+  onBook: (slot: Slot) => void;
 };
 
 function ReservationBox({
-  bg,
   children,
-}: PropsWithChildren<Pick<BoxProps, "bg">>) {
+  ...props
+}: PropsWithChildren<Pick<BoxProps, "bg" | "onClick" | "cursor">>) {
   return (
     <Box
       flex={1}
       borderRadius={"md"}
       textAlign={"center"}
       lineHeight={"4rem"}
-      bg={bg}
+      {...props}
     >
       {children}
     </Box>
   );
 }
 
-export default function Reservations({ reservations }: ReservationsProps) {
+export default function Reservations({
+  reservations,
+  onBook,
+}: ReservationsProps) {
   function renderRow(slot: Slot, reservation?: ReservationDTO) {
     return (
       <React.Fragment key={slot}>
@@ -33,7 +37,13 @@ export default function Reservations({ reservations }: ReservationsProps) {
         {reservation ? (
           <ReservationBox bg={"red"}>{reservation.user?.name}</ReservationBox>
         ) : (
-          <ReservationBox bg={"green.500"} />
+          <ReservationBox
+            bg={"green.500"}
+            cursor={"pointer"}
+            onClick={() => onBook(slot)}
+          >
+            Click to book
+          </ReservationBox>
         )}
       </React.Fragment>
     );
