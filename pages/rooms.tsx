@@ -1,4 +1,4 @@
-import { Heading } from "@chakra-ui/react";
+import { Heading, useToast } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import Rooms from "../components/rooms";
@@ -7,8 +7,19 @@ import { RoomDTO } from "../server/room/dtos/room.dto";
 
 const RoomsPage: NextPage = () => {
   const [rooms, setRooms] = useState<RoomDTO[]>([]);
+  const toast = useToast();
+
   useEffect(() => {
-    getRooms().then(setRooms);
+    getRooms()
+      .then(setRooms)
+      .catch((error) => {
+        toast({
+          title: `Something went wrong`,
+          description: error.message || error,
+          status: "error",
+          isClosable: true,
+        });
+      });
   }, []);
 
   return (

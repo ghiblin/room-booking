@@ -10,6 +10,12 @@ async function _get<T>(path: string) {
     method: "GET",
     credentials: "same-origin",
   });
+  if (res.status === 401) {
+    throw new Error("Unauthenticated");
+  }
+  if (res.status === 403) {
+    throw new Error("Unauthorized");
+  }
   const data = await res.json();
   return data as T;
 }
