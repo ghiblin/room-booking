@@ -8,18 +8,21 @@ import {
   Post,
   Query,
   UnauthorizedException,
+  UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from "@nestjs/common";
 import { Prisma, Slot } from "@prisma/client";
 import { today } from "../../lib/utils";
 import { Identify } from "../common/identify.decorator";
+import { AuthGuard } from "../guards/auth.guard";
 import { CreateReservationDTO } from "./dtos/create-reservation.dto";
 import { ReservationsQueryDTO } from "./dtos/reservations-query.dto";
 import { ReservationInterceptor } from "./interceptors/reservation.interceptor";
 import { ReservationService } from "./reservation.service";
 import { RoomService } from "./room.service";
 
+@UseGuards(AuthGuard)
 @Controller("room")
 export class RoomController {
   constructor(
