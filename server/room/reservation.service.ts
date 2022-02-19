@@ -21,4 +21,17 @@ export class ReservationService {
     });
     return reservations;
   }
+
+  async getReservation(where: Prisma.ReservationWhereUniqueInput) {
+    const reservation = await this.db.reservation.findUnique({
+      where,
+      include: { user: true },
+    });
+    return reservation;
+  }
+
+  async deleteReservation(where: Prisma.ReservationWhereUniqueInput) {
+    const reservation = await this.db.reservation.delete({ where });
+    return reservation;
+  }
 }

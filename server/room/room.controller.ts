@@ -1,17 +1,22 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Query,
+  UnauthorizedException,
+  UseInterceptors,
   ValidationPipe,
 } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import { Prisma, Slot } from "@prisma/client";
 import { today } from "../../lib/utils";
 import { Identify } from "../common/identify.decorator";
 import { CreateReservationDTO } from "./dtos/create-reservation.dto";
 import { ReservationsQueryDTO } from "./dtos/reservations-query.dto";
+import { ReservationInterceptor } from "./interceptors/reservation.interceptor";
 import { ReservationService } from "./reservation.service";
 import { RoomService } from "./room.service";
 
@@ -33,6 +38,7 @@ export class RoomController {
   }
 
   @Post(":code/reservations")
+  @UseInterceptors(ReservationInterceptor)
   bookRoom(@Body() data: CreateReservationDTO, @Identify() email: string) {
     return this.reservationService.createReservation({
       room: { connect: { code: data.roomCode } },
@@ -42,6 +48,7 @@ export class RoomController {
   }
 
   @Get(":code/reservations")
+  @UseInterceptors(ReservationInterceptor)
   getRoomReservations(
     @Param("code") code: string,
     @Query(
@@ -58,5 +65,36 @@ export class RoomController {
       date: query.dt ? new Date(query.dt) : today(),
     };
     return this.reservationService.getReservations(where);
+  }
+
+  @Delete(":code/reservations/:slot")
+  async unbookRoom(
+    @Param("code") code: string,
+    @Param("slot") slot: Slot,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      })
+    )
+    query: ReservationsQueryDTO,
+    @Identify() email: string
+  ) {
+    const where: Prisma.ReservationWhereUniqueInput = {
+      roomCode_date_slot: {
+        date: query.dt ? new Date(query.dt) : today(),
+        roomCode: code,
+        slot,
+      },
+    };
+    const reservation = await this.reservationService.getReservation(where);
+    if (!reservation) {
+      throw new NotFoundException(`Sorry, this reservation does not exist`);
+    }
+    if (reservation.user?.email !== email) {
+      throw new UnauthorizedException(`You can delete only your reservations`);
+    }
+    return this.reservationService.deleteReservation(where);
   }
 }
