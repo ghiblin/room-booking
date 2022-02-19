@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Put, UseGuards } from "@nestjs/common";
 import { User } from "@prisma/client";
 import { Identify } from "../common/identify.decorator";
-import { AuthGuard } from "../gurads/auth.guard";
+import { AuthGuard } from "../guards/auth.guard";
 import { UpdateUserDTO } from "./dtos/update-user.dto";
 import { UserService } from "./user.service";
 

@@ -81,7 +81,7 @@ const AccountPage: NextPage = () => {
               right: 3,
             }}
           />
-          <AccountForm user={userInfo} onSubmit={onSaveUserInfo} />
+          <AccountForm user={userInfo} onUpdateUser={onSaveUserInfo} />
         </Box>
       ) : null}
     </>

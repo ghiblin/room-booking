@@ -16,6 +16,7 @@ import { Prisma, Slot } from "@prisma/client";
 import { today } from "../../lib/utils";
 import { Identify } from "../common/identify.decorator";
 import { AuthGuard } from "../guards/auth.guard";
+import { UserService } from "../user/user.service";
 import { CreateReservationDTO } from "./dtos/create-reservation.dto";
 import { ReservationsQueryDTO } from "./dtos/reservations-query.dto";
 import { ReservationInterceptor } from "./interceptors/reservation.interceptor";
@@ -27,12 +28,17 @@ import { RoomService } from "./room.service";
 export class RoomController {
   constructor(
     private readonly roomService: RoomService,
-    private readonly reservationService: ReservationService
+    private readonly reservationService: ReservationService,
+    private readonly userService: UserService
   ) {}
 
   @Get()
-  getAllRooms() {
-    return this.roomService.getRooms({});
+  async getAllRooms(@Identify() email: string) {
+    const user = await this.userService.findUserByEmail(email);
+
+    return this.roomService.getRooms(
+      user.company ? { company: user.company } : {}
+    );
   }
 
   @Get(":code")

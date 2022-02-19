@@ -11,15 +11,23 @@ import { UpdateUserDTO } from "../../server/user/dtos/update-user.dto";
 
 type AccountFormProps = {
   user: UpdateUserDTO;
-  onSubmit: (user: UpdateUserDTO) => void;
+  onUpdateUser: (user: UpdateUserDTO) => void;
 };
 
-const AccountForm = ({ user, onSubmit }: AccountFormProps) => {
+const AccountForm = ({ user, onUpdateUser }: AccountFormProps) => {
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
   } = useForm<UpdateUserDTO>({ defaultValues: user });
+
+  const onSubmit = (values: UpdateUserDTO) => {
+    // HTML Select need a string value, so I need to convert empty string back to null
+    if (!values.company) {
+      values.company = null;
+    }
+    onUpdateUser(values);
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -40,6 +48,7 @@ const AccountForm = ({ user, onSubmit }: AccountFormProps) => {
       <FormControl isInvalid={Boolean(errors.company)}>
         <FormLabel htmlFor="company">Company</FormLabel>
         <Select id="company" {...register("company")}>
+          <option value={""}>Choose a company</option>
           <option value={"COKE"}>COKE</option>
           <option value={"PEPSI"}>PEPSI</option>
         </Select>
